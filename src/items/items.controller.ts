@@ -6,11 +6,15 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
+  Req,
   Put,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { AuthRequest } from '../auth/auth.types';
 
 @Controller('items')
 export class ItemsController {
@@ -26,20 +30,26 @@ export class ItemsController {
     return this.items.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() dto: CreateItemDto) {
-    return this.items.create(dto);
+  create(@Body() dto: CreateItemDto, @Req() req: AuthRequest) {
+    const ownerId = req.user?.userId; // <-- tipado, sin any
+    return this.items.create({ ...dto, ownerId });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateItemDto) {
     return this.items.update(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  replace(@Param('id') id: string, @Body() dto: CreateItemDto) {
+  replace(@Param('id') id: string, @Body() dto: UpdateItemDto) {
     return this.items.update(id, dto);
   }
+
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.items.remove(id);
