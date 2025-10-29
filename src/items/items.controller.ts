@@ -9,20 +9,22 @@ import {
   UseGuards,
   Req,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthRequest } from '../auth/auth.types';
+import { QueryItemsDto } from './dto/query-items.dto';
 
 @Controller('items')
 export class ItemsController {
   constructor(private readonly items: ItemsService) {}
 
   @Get()
-  findAll() {
-    return this.items.findAll();
+  findAll(@Query() query: QueryItemsDto) {
+    return this.items.findAll(query);
   }
 
   @Get(':id')
@@ -33,7 +35,7 @@ export class ItemsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateItemDto, @Req() req: AuthRequest) {
-    const ownerId = req.user?.userId; // <-- tipado, sin any
+    const ownerId = req.user?.userId;
     return this.items.create({ ...dto, ownerId });
   }
 

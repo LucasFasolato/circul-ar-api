@@ -14,7 +14,8 @@ export class Item {
   @CreateDateColumn() createdAt: Date;
   @UpdateDateColumn() updatedAt: Date;
   @Column({ nullable: true })
-  @Column({ default: 'ropa' }) category: 'ropa' | 'accesorios' | 'calzado';
+  @Column({ default: 'ropa' })
+  category: 'ropa' | 'accesorios' | 'calzado';
   @Column({ default: 'usado' }) condition: 'nuevo' | 'usado';
   @Column({ type: 'text', nullable: true }) description?: string;
   ownerId: string;
