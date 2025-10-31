@@ -1,98 +1,235 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🏗️ CirculAR API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API backend desarrollada con **NestJS + TypeORM + PostgreSQL**, destinada a gestionar usuarios, publicaciones (items), imágenes y sistema de favoritos.
+Incluye autenticación JWT, manejo seguro de archivos con Multer y validaciones robustas vía `class-validator`.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🚀 Tecnologías principales
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| Módulo                 | Tecnología                          |
+| ---------------------- | ----------------------------------- |
+| **Framework**          | NestJS (TypeScript)                 |
+| **ORM**                | TypeORM                             |
+| **Base de datos**      | PostgreSQL                          |
+| **Autenticación**      | JWT + bcrypt                        |
+| **Subida de archivos** | Multer (almacenamiento local)       |
+| **Validaciones**       | class-validator / class-transformer |
+| **Entorno**            | dotenv                              |
+| **Servidor**           | Express (por Nest)                  |
 
-## Project setup
+---
 
-```bash
-$ npm install
+## 📂 Estructura de carpetas
+
+```
+src/
+ ┣ app.module.ts
+ ┣ main.ts
+ ┣ auth/
+ ┃ ┣ auth.controller.ts
+ ┃ ┣ auth.service.ts
+ ┃ ┣ jwt.strategy.ts
+ ┃ ┣ jwt-auth.guard.ts
+ ┃ ┣ jwt-optional.guard.ts
+ ┃ ┣ auth.types.ts
+ ┃ ┗ auth.module.ts
+ ┣ users/
+ ┃ ┣ entities/user.entity.ts
+ ┃ ┣ users.service.ts
+ ┃ ┗ users.module.ts
+ ┣ items/
+ ┃ ┣ entities/item.entity.ts
+ ┃ ┣ entities/item-image.entity.ts
+ ┃ ┣ dto/create-item.dto.ts
+ ┃ ┣ dto/update-item.dto.ts
+ ┃ ┣ dto/query-items.dto.ts
+ ┃ ┣ items.service.ts
+ ┃ ┣ items.controller.ts
+ ┃ ┗ items.module.ts
+ ┣ favorites/
+ ┃ ┣ entities/favorite.entity.ts
+ ┃ ┣ favorites.service.ts
+ ┃ ┣ favorites.controller.ts
+ ┃ ┗ favorites.module.ts
+ ┗ database/
+    ┗ data-source.ts
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## ⚙️ Configuración inicial
 
-# watch mode
-$ npm run start:dev
+1. **Clonar el repositorio**
 
-# production mode
-$ npm run start:prod
+   ```bash
+   git clone https://github.com/tuusuario/circular-api.git
+   cd circular-api
+   ```
+
+2. **Instalar dependencias**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configurar variables de entorno**
+   Crear un archivo `.env` en la raíz:
+
+   ```env
+   PORT=**
+   DATABASE_URL=**
+   JWT_SECRET=**
+   JWT_EXPIRES_IN=**
+   BASE_URL=**
+   ```
+
+4. **Levantar la base de datos**
+   (Ejemplo con Docker)
+
+   ```bash
+   docker run --name pg-circular -e POSTGRES_PASSWORD=1234 -p 5432:5432 -d postgres
+   ```
+
+5. **Ejecutar el proyecto**
+
+   ```bash
+   npm run start:dev
+   ```
+
+---
+
+## 🧩 Módulos implementados
+
+### 1️⃣ Auth (`/auth`)
+
+| Método | Endpoint         | Descripción                                                 |
+| ------ | ---------------- | ----------------------------------------------------------- |
+| `POST` | `/auth/register` | Registra un nuevo usuario                                   |
+| `POST` | `/auth/login`    | Inicia sesión y devuelve `access_token`                     |
+| `GET`  | `/auth/me`       | Devuelve los datos del usuario autenticado (requiere token) |
+
+**Ejemplo de registro**
+
+```json
+{
+  "name": "Lucas",
+  "email": "lucas@test.com",
+  "password": "123456"
+}
 ```
 
-## Run tests
+**Respuesta**
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1..."
+}
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### 2️⃣ Items (`/items`)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+| Método   | Endpoint            | Descripción                            |
+| -------- | ------------------- | -------------------------------------- |
+| `GET`    | `/items`            | Lista items (con filtros y paginación) |
+| `GET`    | `/items/:id`        | Obtiene un item por ID                 |
+| `POST`   | `/items`            | Crea un item (requiere token)          |
+| `PATCH`  | `/items/:id`        | Actualiza un item (requiere token)     |
+| `DELETE` | `/items/:id`        | Elimina un item (requiere token)       |
+| `POST`   | `/items/:id/images` | Sube imágenes al item (requiere token) |
+| `GET`    | `/items/:id/images` | Lista imágenes de un item              |
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+**Campos del item**
+
+```json
+{
+  "title": "Remera oversize",
+  "price": 18000,
+  "category": "ropa",
+  "condition": "usado",
+  "description": "Casi nueva, talle M"
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**Respuesta**
 
-## Resources
+```json
+{
+  "id": "70bab8e7-de44-4243-b9bd-09534ed78626",
+  "title": "Remera oversize",
+  "price": 18000,
+  "category": "ropa",
+  "condition": "usado",
+  "ownerId": "45f344e3-2c9a-49a9-be0d-b5110a128325",
+  "images": [
+    {
+      "url": "http://localhost:3000/uploads/63057aea6c70f1ff1bd26cb3acee7844.jpg"
+    }
+  ],
+  "createdAt": "2025-10-30T14:30:24.355Z"
+}
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+📎 Las imágenes se guardan en `/uploads` y son accesibles desde el navegador.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+### 3️⃣ Favoritos (`/favorites`)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Método   | Endpoint             | Descripción                           |
+| -------- | -------------------- | ------------------------------------- |
+| `POST`   | `/favorites/:itemId` | Marca un item como favorito           |
+| `DELETE` | `/favorites/:itemId` | Quita el favorito                     |
+| `GET`    | `/favorites/me`      | Lista mis favoritos                   |
+| `GET`    | `/favorites/:itemId` | Consulta si un item está en favoritos |
 
-## Stay in touch
+**Respuesta típica**
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```json
+{
+  "itemId": "70bab8e7-de44-4243-b9bd-09534ed78626",
+  "favorite": true
+}
+```
 
-## License
+Además, los endpoints de items (`/items` y `/items/:id`) incluyen un campo calculado:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```json
+"favorite": true
+```
+
+cuando el usuario autenticado tiene ese item marcado.
+
+---
+
+## 🔐 Seguridad y buenas prácticas
+
+* Autenticación con JWT.
+* Passwords cifradas con bcrypt.
+* Validaciones globales con `ValidationPipe`.
+* CORS habilitado para el front.
+* Uploads limitados a 5 MB por archivo.
+* Whitelist de ordenamiento para prevenir SQL Injection.
+
+---
+
+## 🧠 Próximos pasos (plan a seguir)
+
+* [ ] Agregar paginación avanzada en favoritos.
+* [ ] Permitir múltiples imágenes por ítem con eliminación individual.
+* [ ] Endpoint `/users/:id/items` para listar los items de un usuario.
+* [ ] Filtros combinados (rango de precio + búsqueda por texto + categoría).
+* [ ] Implementar refresh token (JWT dual).
+* [ ] Integrar con front (React / Next.js).
+
+---
+
+## 👨‍💻 Autor
+
+**Lucas Fasolato**
+Desarrollador Backend / Estudiante de Ingeniería en Sistemas
+📍 Rosario, Argentina
+💼 Proyecto académico y personal 2025
+

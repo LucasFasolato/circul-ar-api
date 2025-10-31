@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Socket.IO Test</title></head>
+  <body>
+    <h1>CirculAR Chat Tester</h1>
+    <input id="token" placeholder="JWT" style="width:420px" />
+    <input id="conv" placeholder="conversationId" style="width:420px" />
+    <button id="connect">Conectar</button>
+    <button id="join">Join conversation</button>
+    <pre id="log" style="height:300px;overflow:auto;border:1px solid #ccc"></pre>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+      let socket;
+      const log = (...a)=>{ const p=document.getElementById('log'); p.textContent += a.join(' ') + '\n'; p.scrollTop=p.scrollHeight; };
+
+      document.getElementById('connect').onclick = () => {
+        const token = document.getElementById('token').value.trim();
+        socket = io('http://localhost:3000/chat', { auth: { token } });
+
+        socket.on('connect', () => log('✅ connected', socket.id));
+        socket.on('connect_error', (err) => log('❌ connect_error', err.message));
+        socket.on('message:new', (msg) => log('💬 message:new', JSON.stringify(msg)));
+        socket.on('conversation:joined', (d) => log('🟢 joined', JSON.stringify(d)));
+      };
+
+      document.getElementById('join').onclick = () => {
+        const conversationId = document.getElementById('conv').value.trim();
+        socket.emit('conversation:join', { conversationId });
+        log('➡️ emit conversation:join', conversationId);
+      };
+    </script>
+  </body>
+</html>

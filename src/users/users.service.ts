@@ -23,6 +23,13 @@ export class UsersService {
       .getOne();
   }
 
+  findAll() {
+    return this.repo.find({
+      select: ['id', 'name', 'email', 'createdAt'], // no devolvemos el hash
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   /** Busca por id (sin passwordHash) */
   findById(id: string): Promise<User | null> {
     return this.repo.findOne({ where: { id } });

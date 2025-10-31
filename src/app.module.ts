@@ -11,6 +11,7 @@ import { ItemsModule } from './items/items.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FavoritesModule } from './favorites/favorites.module';
     AuthModule,
     ItemsModule,
     FavoritesModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

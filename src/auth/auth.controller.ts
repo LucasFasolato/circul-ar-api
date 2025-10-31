@@ -36,4 +36,12 @@ export class AuthController {
     const safeUser = (({ passwordHash, ...rest }) => rest)(user);
     return safeUser;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('users')
+  async getUsers(): Promise<Partial<User[]> | null> {
+    const user = await this.users.findAll();
+    if (!user) return null;
+    return user;
+  }
 }

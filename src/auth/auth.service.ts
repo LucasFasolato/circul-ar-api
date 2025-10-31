@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   async login(data: { email: string; password: string }) {
-    const user = await this.users.findByEmail(data.email);
+    const user = await this.users.findByEmailWithSecret(data.email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const ok = await bcrypt.compare(data.password, user.passwordHash);
